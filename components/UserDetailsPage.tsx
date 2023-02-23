@@ -42,6 +42,11 @@ const UserDetailsPage: FC = () => {
           <Text style={styles.editText}>Edit</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => alert('button works')}>
+          <Text style={styles.buttonText}>Create Post</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -50,8 +55,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
     padding: 20,
+    marginTop: 20,
   },
   profilePictureContainer: {
     marginVertical: 20,
@@ -73,6 +78,22 @@ const styles = StyleSheet.create({
   editText: {
     fontSize: 18,
     color: "blue",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    alignSelf: "baseline",
+    marginTop: 80,
+  },
+  button: {
+    flex: 1,
+    margin: 10,
+    alignItems: "center",
+    backgroundColor: "#DDDDDD",
+    padding: 10,
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 16,
   },
 });
 

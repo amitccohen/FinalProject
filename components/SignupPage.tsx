@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 
-const SignupPage: FC = () => {
+const SignupPage: FC<{ navigation: any }> = ({ navigation }) => {
   const [username, onText1Change] = useState<string>("");
   const [password, onText2Change] = useState<string>("");
   const [confirmPassword, onText3Change] = useState<string>("");
@@ -18,6 +18,7 @@ const SignupPage: FC = () => {
 
   const pressHandlerSignUp = () => {
     alert("Clicked " + username + " " + password + " " + confirmPassword);
+    navigation.goBack()
   };
 
   const onConfirmPasswordChange = (text: string) => {
