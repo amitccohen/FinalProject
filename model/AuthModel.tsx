@@ -3,7 +3,9 @@ import apiClient from "../api/ClientApi";
 
 export type User = {
     email: String,
+    name: String,
     password: String,
+    avatarUrl: String
 }
 
 export type Token = {
@@ -18,8 +20,10 @@ type UserInfo = {
 
 const register = async (user: User) => {
     const data = {
-        email: user.email,
-        password: user.password,
+      email: user.email,
+      name: user.name,
+      password: user.password,
+      avatarUrl: user.avatarUrl
     }
     try {
         const res = await AuthApi.register(data)
@@ -32,7 +36,9 @@ const register = async (user: User) => {
 const login = async (user: User): Promise<string | UserInfo | any> => {
     const d = {
       email: user.email,
+      name: user.name,
       password: user.password,
+      avatarUrl: user.avatarUrl
     };
     try {
       const res = await AuthApi.login(d);

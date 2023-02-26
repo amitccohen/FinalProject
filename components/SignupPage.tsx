@@ -10,18 +10,47 @@ import {
   Alert,
 } from "react-native";
 import AuthModel, { User } from "../model/AuthModel";
+import * as ImagePicker from 'expo-image-picker';
 
 const SignupPage: FC<{ navigation: any }> = ({ navigation }) => {
+  const [avatarUri, setAvatrUri] = useState("")
   const [username, onText1Change] = useState<string>("");
   const [password, onText2Change] = useState<string>("");
   const [confirmPassword, onText3Change] = useState<string>("");
+  const [name, onText4Change] = useState<string>("");
   const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
 
+  const handleChoosePhoto = async () => {
+    try{
+      const res = await ImagePicker.launchImageLibraryAsync()
+      if(!res.canceled && res.assets.length > 0){
+        const uri = res.assets[0].uri;
+        setAvatrUri(uri)
+      }
+    }catch(err){
+      console.log("open camera error" + err)
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    try{
+      const res = await ImagePicker.launchCameraAsync()
+      if(!res.canceled && res.assets.length > 0){
+        const uri = res.assets[0].uri;
+        setAvatrUri(uri)
+      }
+    }catch(err){
+      console.log("open camera error" + err)
+    }
+  };
+
   const pressHandlerSignUp = async () => {
-    alert("Clicked " + username + " " + password + " " + confirmPassword);
+    alert("Hi " + name + " Welcome to the app , please log in");
     const user: User = {
       email: username,
+      name: name,
       password: password,
+      avatarUrl: avatarUri
     }
     try{
       await AuthModel.register(user)
@@ -39,16 +68,26 @@ const SignupPage: FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.userPictureStyle}
-        source={require("../assets/avatar-icon-images-4.jpg")}
-      ></Image>
-
+      <TouchableOpacity onPress={handleChoosePhoto}>
+        <View style={styles.imageContainer}>
+          {avatarUri && <Image source={{uri:avatarUri}} style={styles.image} />}
+          {!avatarUri && <Text style={styles.choosePhotoText}>Choose Photo</Text>}
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleTakePhoto}>
+        <Text style={styles.takePhotoText}>Take Photo</Text>
+      </TouchableOpacity>
       <TextInput
         style={styles.input}
         onChangeText={onText1Change}
-        placeholder="username"
+        placeholder="email"
         value={username}
+      />
+      <TextInput
+        style={styles.input}
+        onChangeText={onText4Change}
+        placeholder="name"
+        value={name}
       />
       <TextInput
         style={styles.input}
@@ -80,10 +119,38 @@ const styles = StyleSheet.create({
   },
   userPictureStyle: {
     marginTop: 10,
-    height: 200,
+    height: 150,
     resizeMode: "contain",
     alignSelf: "center",
     marginBottom: 20,
+  },
+  choosePhotoText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#999",
+    textAlign:'center'
+  },
+  takePhotoText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#007aff",
+    marginBottom: 20,
+    resizeMode: "contain",
+    alignSelf: "center",
+  },
+  imageContainer: {
+    backgroundColor: "#f0f0f0",
+    width: 100,
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
   input: {
     height: 40,

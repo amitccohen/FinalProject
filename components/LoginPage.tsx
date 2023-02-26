@@ -14,20 +14,23 @@ import { AsyncStorage } from 'react-native';
 
 const LoginPage: FC<{ navigation: any }> = ({ navigation }) => {
   const [username, onText1Change] = useState<string>("");
+  const [name, onText4Change] = useState<string>("");
   const [password, onText2Change] = useState<string>("");
-
-   useEffect(() => {
-     AsyncStorage.getItem('refreshToken').then(async token => {
-       if (token) {
-         navigation.replace("UserDetailsPage");
-       }
-     });
-   }, [navigation]);
+  const [avatarUri, setAvatrUri] = useState("")
+  //  useEffect(() => {
+  //    AsyncStorage.getItem('refreshToken').then(async token => {
+  //      if (token) {
+  //        navigation.replace("UserDetailsPage");
+  //      }
+  //    });
+  //  }, [navigation]);
 
   const pressHandlerLogin = async () => {
     const user: User = {
       email: username,
+      name: name,
       password: password,
+      avatarUrl: avatarUri
     };
 
     const d = await AuthModel.login(user)
