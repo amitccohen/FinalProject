@@ -1,22 +1,15 @@
-import { StatusBar } from "expo-status-bar";
 import { FC } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
 import UserDetailsPage from "./components/UserDetailsPage";
+import CreatePostPage from "./components/CreatePostPage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import AllPostsPage from "./components/AllPostsPage";
 
 const Stack = createNativeStackNavigator();
-
-const UserDetailsHeaderTitle: FC = () => {
-
-  return(
-    <TouchableOpacity>
-      <Text>User Details</Text>
-    </TouchableOpacity>
-  )
-}
 
 const App: FC = () => {
   const clickHandler = () => {
@@ -38,14 +31,17 @@ const App: FC = () => {
         <Stack.Screen
           name="UserDetailsPage"
           component={UserDetailsPage}
-          options={{ headerTitle: () => <UserDetailsHeaderTitle />,
-          headerRight: () => (
-            <Button
-              onPress={() => alert('clicked')}
-              title="Edit"
-              color="gray"
-            />
-          ) }}
+          options={{ title: "User Details" }}
+        ></Stack.Screen>
+        <Stack.Screen
+          name="CreatePostPage"
+          component={CreatePostPage}
+          options={{ title: "Create Post" }}
+        ></Stack.Screen>
+        <Stack.Screen
+          name="AllPostsPage"
+          component={AllPostsPage}
+          options={{ title: "All Posts" }}
         ></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { FC, useState } from "react";
 import {
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   TextInput,
   Alert,
 } from "react-native";
+import AuthModel, { User } from "../model/AuthModel";
 
 const SignupPage: FC<{ navigation: any }> = ({ navigation }) => {
   const [username, onText1Change] = useState<string>("");
@@ -16,8 +17,18 @@ const SignupPage: FC<{ navigation: any }> = ({ navigation }) => {
   const [confirmPassword, onText3Change] = useState<string>("");
   const [passwordsMatch, setPasswordsMatch] = useState<boolean>(true);
 
-  const pressHandlerSignUp = () => {
+  const pressHandlerSignUp = async () => {
     alert("Clicked " + username + " " + password + " " + confirmPassword);
+    const user: User = {
+      email: username,
+      password: password,
+    }
+    try{
+      await AuthModel.register(user)
+      console.log('success signup signuppage')
+    } catch(err) {
+      console.log('fail signup' + err)
+    }
     navigation.goBack()
   };
 

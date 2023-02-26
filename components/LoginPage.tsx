@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
 import { FC, useState } from "react";
 import {
   StyleSheet,
@@ -9,19 +9,46 @@ import {
   TextInput,
   Alert,
 } from "react-native";
+import AuthModel, { User } from "../model/AuthModel";
+import { AsyncStorage } from 'react-native';
 
+const LoginPage: FC<{ navigation: any }> = ({ navigation }) => {
+  const [username, onText1Change] = useState<string>("");
+  const [password, onText2Change] = useState<string>("");
 
-const LoginPage: FC<{navigation: any}> = ({navigation}) => {
+   useEffect(() => {
+     AsyncStorage.getItem('refreshToken').then(async token => {
+       if (token) {
+         navigation.replace("UserDetailsPage");
+       }
+     });
+   }, [navigation]);
 
-  const [username, onText1Change] = useState<string>();
-  const [password, onText2Change] = useState<string>();
-  
-  const pressHandlerLogin = () => {
-    navigation.replace("UserDetailsPage");
+  const pressHandlerLogin = async () => {
+    const user: User = {
+      email: username,
+      password: password,
+    };
+
+    const d = await AuthModel.login(user)
+    .then(async (data) => {
+      if (typeof(data) === 'undefined') {
+        console.log('login failed:', data);
+        Alert.alert("Wrong username or password")
+      } else {
+        console.log('login successful:', data);
+        await AsyncStorage.setItem('accessToken', data[0]);
+        await AsyncStorage.setItem('refreshToken', data[2]);
+        navigation.replace("UserDetailsPage");
+      }
+    })
+    .catch((err) => {
+      console.log('login failed:', err);
+      });
   };
-  ;
+
   const pressHandlerSignUp = () => {
-    navigation.navigate("SignupPage")
+    navigation.navigate("SignupPage");
   };
 
   return (
@@ -41,6 +68,7 @@ const LoginPage: FC<{navigation: any}> = ({navigation}) => {
         style={styles.input}
         onChangeText={onText2Change}
         placeholder="password"
+        secureTextEntry={true}
         value={password}
       />
 
