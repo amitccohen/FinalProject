@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,21 +11,72 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import AuthModel, { Token } from "../model/AuthModel";
 import { AsyncStorage } from 'react-native';
+import UserModel, { UserUpdate } from "../model/UserModel";
+import * as ImagePicker from 'expo-image-picker';
+
 
 const UserDetailsPage: FC<{navigation: any}> = ({navigation}) => {
-  const [fullName, setFullName] = useState<string>("John Doe");
+  const [fullName, setFullName] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<string>(
     "https://randomuser.me/api/portraits/men/1.jpg"
   );
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempFullName, setTempFullName] = useState(fullName);
+  const [tempPicture, setTempPicture] = useState<string>("");
+
+    var UriAfretChange = ""
+
+  const loadUser = async ()=>{
+    const id = await AsyncStorage.getItem('id')
+    const res = await UserModel.getUserById(id)
+    
+    setFullName(res[0])
+    setProfilePicture(res[1])
+  }
+
+  useEffect(() => {
+    try{
+      loadUser()
+    } catch(err) {
+      console.log('fail signup' + err)
+    }
+  }, []);
 
   const handleEditName = () => {
     setIsEditingName(true);
   };
 
-  const handleSaveName = () => {
+  const handleTakePhoto = async () => {
+    try{
+      const res = await ImagePicker.launchCameraAsync()
+      if(!res.canceled && res.assets.length > 0){
+        const uri = res.assets[0].uri;
+        UriAfretChange = uri
+        console.log("while: " + uri)
+        console.log("while: " + UriAfretChange)
+        setProfilePicture(uri)
+        console.log("while pp: " + profilePicture)
+      }
+    }catch(err){
+      console.log("open camera error" + err)
+    }
+  };
+
+  const handleSaveName = async () => {
     setFullName(tempFullName);
+    const id_ = await AsyncStorage.getItem('id')
+    const up : UserUpdate = {
+      id: id_,
+      name: tempFullName,
+      avatarUrl: profilePicture
+    }
+    try{
+      const res = await UserModel.upadteUser(up)
+      console.log("update user success")
+    } catch(err){
+      console.log("update user failed " + err)
+    }
+    
     setIsEditingName(false);
   };
 
@@ -34,9 +85,22 @@ const UserDetailsPage: FC<{navigation: any}> = ({navigation}) => {
     setIsEditingName(false);
   };
 
-  const handleEditPicture = () => {
-    // Handle edit picture functionality
-    Alert.alert("Edit Picture");
+  const handleEditPicture = async () => {
+    console.log("before: " + profilePicture)
+    await handleTakePhoto()
+    console.log("after: " +profilePicture)
+    const id_ = await AsyncStorage.getItem('id')
+    const up : UserUpdate = {
+      id: id_,
+      name: fullName,
+      avatarUrl: UriAfretChange
+    }
+    try{
+      const res = await UserModel.upadteUser(up)
+      console.log("update user success")
+    } catch(err){
+      console.log("update user failed " + err)
+    }
   };
 
   const renderName = () => {

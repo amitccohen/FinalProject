@@ -8,9 +8,10 @@ import {
   View,
   TextInput,
   Alert,
+  AsyncStorage,
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import UserModel from "../model/UserModel";
+import UserModel, { Post } from "../model/UserModel";
 
 
 
@@ -62,6 +63,18 @@ const CreatePostPage: FC<{navigation: any}> = ({navigation}) => {
   const handlePost = async () => {
     if (avatarUri != "") {
       const url = await UserModel.uploadImage(avatarUri)
+      const sender = await AsyncStorage.getItem('id')
+      console.log(sender)
+      const post:Post = {
+        message: description,
+        sender: sender,
+        avatarUrl: url
+      }
+      try{
+        await UserModel.addNewPost(post)
+      }catch(err){
+        console.log("cant create post " + err)
+      }
     }
     Alert.alert("Your Post is Live!\n", `Description: ${description}`);
     navigation.goBack()

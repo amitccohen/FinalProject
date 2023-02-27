@@ -32,7 +32,6 @@ const LoginPage: FC<{ navigation: any }> = ({ navigation }) => {
       password: password,
       avatarUrl: avatarUri
     };
-
     const d = await AuthModel.login(user)
     .then(async (data) => {
       if (typeof(data) === 'undefined') {
@@ -41,6 +40,7 @@ const LoginPage: FC<{ navigation: any }> = ({ navigation }) => {
       } else {
         console.log('login successful:', data);
         await AsyncStorage.setItem('accessToken', data[0]);
+        await AsyncStorage.setItem('id', data[1]);
         await AsyncStorage.setItem('refreshToken', data[2]);
         navigation.replace("UserDetailsPage");
       }
