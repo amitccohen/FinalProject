@@ -77,7 +77,7 @@ const getAllPosts = async () => {
   let d = Array<Post>()
   if (res.data) {
       res.data.forEach((obj: any) => {
-        const s = "http://192.168.1.160:" + obj.avatarUrl.slice(16)
+        const s = "http://172.20.10.9:" + obj.avatarUrl.slice(16)
           const p: Post = {
             message: obj.message,
             sender: obj.sender,

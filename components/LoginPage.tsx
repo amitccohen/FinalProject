@@ -11,19 +11,52 @@ import {
 } from "react-native";
 import AuthModel, { User } from "../model/AuthModel";
 import { AsyncStorage } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+
+//web : 730646438674-patutekf6s1aj89r1f2lojd3qpmbs9bq.apps.googleusercontent.com
+// android : 730646438674-qjq8jf548sp6aiv192i79o2rh1db8710.apps.googleusercontent.com
+WebBrowser.maybeCompleteAuthSession();
+
 
 const LoginPage: FC<{ navigation: any }> = ({ navigation }) => {
+
+  const [accessToken,setAccessToken] = useState(null)
+  const [user,setUser] = useState(null)
+  const [request,response,promptAsync] = Google.useIdTokenAuthRequest({
+    clientId: "730646438674-patutekf6s1aj89r1f2lojd3qpmbs9bq.apps.googleusercontent.com",
+    androidClientId: "730646438674-patutekf6s1aj89r1f2lojd3qpmbs9bq.apps.googleusercontent.com"
+  })
+
+
+
   const [username, onText1Change] = useState<string>("");
   const [name, onText4Change] = useState<string>("");
   const [password, onText2Change] = useState<string>("");
   const [avatarUri, setAvatrUri] = useState("")
-  //  useEffect(() => {
-  //    AsyncStorage.getItem('refreshToken').then(async token => {
-  //      if (token) {
-  //        navigation.replace("UserDetailsPage");
-  //      }
-  //    });
-  //  }, [navigation]);
+  useEffect(() => {
+
+    if(response?.type === "success" ) {
+      setAccessToken(response.authentication.accessToken);
+    }
+    accessToken && fetchUserInfo();
+
+
+    AsyncStorage.getItem('refreshToken').then(async token => {
+      if (token) {
+        navigation.replace("UserDetailsPage");
+      }
+    });
+  }, [navigation,response,accessToken]);
+
+  const fetchUserInfo = async () => {
+    let response = await fetch("https://www.googleapis.com/userinfo/v2/me",{
+      headers: { Authorization: `Bearer ${accessToken}`}
+    });
+    const userInfo = await response.json();
+    setUser(userInfo);
+    console.log(user.picture)
+  }
 
   const pressHandlerLogin = async () => {
     const user: User = {
@@ -58,7 +91,7 @@ const LoginPage: FC<{ navigation: any }> = ({ navigation }) => {
     <View style={styles.container}>
       <Image
         style={styles.userPictureStyle}
-        source={require("../assets/avatar-icon-images-4.jpg")}
+        source={require("../assets/logoNew.png")}
       ></Image>
 
       <TextInput
@@ -89,6 +122,9 @@ const LoginPage: FC<{ navigation: any }> = ({ navigation }) => {
       <View>
         <Text style={styles.text}>or</Text>
       </View>
+      <TouchableOpacity>
+        <Text style={styles.text} onPress={()=>{promptAsync();}}>Login with Google</Text>
+      </TouchableOpacity>
     </View>
   );
 };

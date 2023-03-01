@@ -158,7 +158,7 @@ const UserDetailsPage: FC<{navigation: any}> = ({navigation}) => {
           <AntDesign name="plus" size={24} color="white" />
           <Text style={styles.createPostButtonText}>Create Post</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity
+        { <TouchableOpacity
           style={styles.logoutButton}
           onPress={async () => {
             const t =  await AsyncStorage.getItem('refreshToken')
@@ -166,13 +166,14 @@ const UserDetailsPage: FC<{navigation: any}> = ({navigation}) => {
               token: t
             }
             await AuthModel.logout(token)
-            
+            AsyncStorage.clear()
             navigation.replace("LoginPage")
           }
         }
         >
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </TouchableOpacity> */}
+          <AntDesign name="disconnect" size={24} color="white" />
+          <Text style={styles.logoutButtonText}>  Logout</Text>
+        </TouchableOpacity> }
       </View>
     </View>
   );
@@ -197,11 +198,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logoutButton: {
-    backgroundColor: '#FF5733',
-    borderRadius: 10,
+    backgroundColor: 'red',
+    borderRadius: 30,
     padding: 10,
     alignSelf: 'center',
     marginTop: 20,
+    flexDirection: "row",
+    
   },
   seeAllPostsButton: {
     backgroundColor: "green",
@@ -209,6 +212,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     flexDirection: "row",
+    bottom: 40,
     alignItems: "center",
   },
   logoutButtonText: {
